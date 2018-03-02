@@ -25,9 +25,10 @@ Extends support of the SDK to OneView Rest API version 600 (OneView v4.0).
 - Server hardware
 - Server profile
 - Server profile template
+- Storage system
 - Switch
 - Switch type
-- Tasks
+- Task
 - Uplink set
 
 # 4.4.0

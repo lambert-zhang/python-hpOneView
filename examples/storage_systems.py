@@ -179,6 +179,12 @@ if oneview_client.api_version >= 500:
     print("   '{}' at uri: {}".format(
         reachable_port_by_uri['members'][0]['reachableNetworks'], reachable_port_by_uri['uri']))
 
+    print("\nGet templates related to a storage systems")
+    templates = oneview_client.storage_systems.get_templates(
+       storage_system['uri'])
+    print("   '{}' at uri: {}".format(
+        templates['members'][0]['name'], templates['members'][0]['uri']))
+
 # Remove storage system
 print("\nRemove storage system")
 oneview_client.storage_systems.remove(storage_system)
