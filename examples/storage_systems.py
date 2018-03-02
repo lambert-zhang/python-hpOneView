@@ -50,31 +50,31 @@ oneview_client = OneViewClient(config)
 # Add and update storage system for management
 storage_system = oneview_client.storage_systems.add(options)
 print("\nAdded storage system '%s'.\n   uri = '%s'" %
-      (storage_system['name'], storage_system['uri']))         
+      (storage_system['name'], storage_system['uri']))
 storage_system['deviceSpecificAttributes']['managedDomain'] = storage_system['deviceSpecificAttributes']['discoveredDomains'][0]
 storage_system = oneview_client.storage_systems.update(storage_system)
 print("\nUpdated 'managedDomain' to '{}' so storage system can be managed".format(
-storage_system['deviceSpecificAttributes']['managedDomain']))       
+    storage_system['deviceSpecificAttributes']['managedDomain']))
 
 # Add storage pool to be managed
 try:
     print("\nAdd first storage pool from unmanaged storage pools to be managed")
-    if storage_system['deviceSpecificAttributes']['discoveredPools'] != None:
-        for pool in storage_system['deviceSpecificAttributes']['discoveredPools']:        
+    if storage_system['deviceSpecificAttributes']['discoveredPools'] is not None:
+        for pool in storage_system['deviceSpecificAttributes']['discoveredPools']:
             if pool['domain'] == storage_system['deviceSpecificAttributes']['managedDomain']:
-                pool_to_manage = pool                
+                pool_to_manage = pool
             storage_system['deviceSpecificAttributes']['managedPools'] = [{
                 "type": pool_to_manage['type'],
                 "domain": pool_to_manage['type'],
                 "name": pool_to_manage['name'],
                 "deviceType": pool_to_manage['deviceType']
             }]
-            storage_system = oneview_client.storage_systems.update(storage_system)              
+            storage_system = oneview_client.storage_systems.update(storage_system)
             print("\nManaged storage pool '{}' at uri: '{}'".format(storage_system['deviceSpecificAttributes'][
                 'managedPools'][0]['name'], storage_system['deviceSpecificAttributes']['managedPools'][0]['uri']))
-            break                  
+            break
 except HPOneViewException as e:
-    print(e.msg)        
+    print(e.msg)
 
 # Get all managed storage systems
 print("\nGet all managed storage systems")
@@ -117,11 +117,11 @@ except HPOneViewException as e:
 # Add managed ports
 ports_to_manage = []
 for port in storage_system['ports']:
-    if port['actualSanUri'] != "unknown":        
+    if port['actualSanUri'] != "unknown":
         port_to_manage = {
             "type": port['type'],
-            "name": port['name'],           
-            "expectedNetworkUri": '/rest/fc-networks/5c942011-c7bc-42f2-a52a-3d471f01f2c6',            
+            "name": port['name'],
+            "expectedNetworkUri": '/rest/fc-networks/5c942011-c7bc-42f2-a52a-3d471f01f2c6',
             "actualSanUri": port['actualSanUri'],
             "expectedSanUri": port['expectedSanUri'],
             "mode": 'Managed',
@@ -167,21 +167,19 @@ if oneview_client.api_version <= 300:
 if oneview_client.api_version >= 500:
     # Get managed target port for specified storage system
     print("\nGet all reachable port managed by the appliance")
-    reachable_port = oneview_client.storage_systems.get_reachable_ports(
-       storage_system['uri'])
+    reachable_port = oneview_client.storage_systems.get_reachable_ports(storage_system['uri'])
     print("   '{}' at uri: {}".format(
         reachable_port['members'][0]['name'], reachable_port['members'][0]['expectedNetworkUri']))
 
     # Get all reachable storage ports connected to the set of expected network URIs
     print("\nGet reachable_port by uri")
     reachable_port_by_uri = oneview_client.storage_systems.get_reachable_ports(
-       storage_system['uri'], networks=reachable_port['members'][0]['reachableNetworks'])
+        storage_system['uri'], networks=reachable_port['members'][0]['reachableNetworks'])
     print("   '{}' at uri: {}".format(
         reachable_port_by_uri['members'][0]['reachableNetworks'], reachable_port_by_uri['uri']))
 
     print("\nGet templates related to a storage systems")
-    templates = oneview_client.storage_systems.get_templates(
-       storage_system['uri'])
+    templates = oneview_client.storage_systems.get_templates(storage_system['uri'])
     print("   '{}' at uri: {}".format(
         templates['members'][0]['name'], templates['members'][0]['uri']))
 
